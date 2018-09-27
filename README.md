@@ -17,13 +17,13 @@ Please install them if you don't have them already.
 From the command line, clone the repository:
 
 ```sh
-$ git clone https://github.com/ryanflorence/advanced-react-workshop.git
+$ git clone https://github.com/reach/modern-advanced-react-workshop
 ```
 
 ## Step 3 - Install dependencies
 
 ```sh
-$ cd advanced-react-workshop
+$ cd modern-advanced-react-workshop
 $ yarn
 ```
 
@@ -38,7 +38,7 @@ Each exercise is a separate app using [Create React App](https://github.com/face
 To run one, first `cd` into the directory:
 
 ```sh
-cd 01/01-exercise
+cd 01-imperative-to-declarative/exercise
 ```
 
 Then run it
@@ -47,9 +47,7 @@ Then run it
 yarn start
 ```
 
-Your browser should open up to a running app that looks like this:
-
-![screenshot](./screenshot.png)
+Your browser should open up to a running app.
 
 ## Troubleshooting
 
