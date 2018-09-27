@@ -1,0 +1,14 @@
+{
+  "name": "advanced-react-workshop",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "node scripts/install.js"
+  },
+  "dependencies": {
+    "prettier": "^1.11.1",
+    "shelljs": "^0.8.1"
+  },
+  "prettier": {}
+}

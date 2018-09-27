@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+  background: rgb(229, 227, 223);
+}
+
+
+.container,
+.map {
+  width: 100vw;
+  height: 100vh;
+}
+
+.loading-dots {
+  font-size: 200px;
+  display: block;
+  text-align: center;
+  color: white;
+}
