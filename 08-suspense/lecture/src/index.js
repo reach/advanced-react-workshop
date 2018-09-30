@@ -1,6 +1,8 @@
+import "./index.css";
 import React from "react";
-import ReactDOM from "react-dom";
-import "./lib/index.css";
-import App from "./App.start";
+import { unstable_createRoot } from "react-dom";
+// import App from "./components/App";
+// import App from "./workouts/App";
+import App from "./workouts/Refactor";
 
-ReactDOM.render(<App />, document.getElementById("root"));
+unstable_createRoot(document.getElementById("root")).render(<App />);

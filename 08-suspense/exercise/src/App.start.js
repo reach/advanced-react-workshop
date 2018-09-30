@@ -1,106 +1,102 @@
 /*
 
-Make these two components work like a normal <select><option/></select>
-component.
+1. Fill in `Contact` to use `ContactsResource` to fetch the contact, use the
+path: `/contacts/${id}` like this:
 
-First, don't worry about accessibility, we want to illustrate controlled v.
-uncontrolled components first.
+2. Notice how we transition before the image loads and then the page jumps
+around?  We're waiting for the contact data but not the image. Create an
+`<Img/>` component and a new `ImgResource` to delay transitioning until
+the image is loaded
 
-First, make the uncontrolled usage work. This means it will keep the value in
-state.
+Remember, `createResource` needs to return a promise
 
-1. Get the label to display correctly based on state.
-2. When you click the component it opens/closes
-3. When you click an option the component closes and updates the value in
-   state, and the label displays correctly
+Tips:
 
-Now, make the uncontrolled version work. Instead of reading from state, you'll
-read from props, and instead of setting state, you'll need to do something
-else!
+```
+// you can load images programatically
+let image = new Image();
+image.src = someUrl
+image.onload = () => {}
 
-Once you've got that done, get started on making it accessible.
+// You can create promises out of anything, here we'll use
+// setTimeout to make a "sleep" promise:
+function sleep(ms=1000) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, ms)
+  })
+}
 
-Here are some guides, but we'll be doing it together as a class, too.
+// combine those two things to create your `ImageResource`
+```
 
-https://www.w3.org/TR/wai-aria-practices-1.1/#Listbox
-https://www.w3.org/TR/wai-aria-practices-1.1/examples/listbox/listbox-collapsible.html
+3. Finally, render a `Placeholder` (you'll need to import it from react) around
+`Img` with a `2000` delayMs, and then artificially delay your ImageResource by
+3000ms with setTimeout.  What happens when you click the links now?
 
 */
 
-import "./index.css";
 import React from "react";
-import PropTypes from "prop-types";
+import { cache } from "./lib/cache";
+import { createResource } from "simple-cache-provider";
+import { Router, Link } from "@reach/router";
 
-class Select extends React.Component {
-  static propTypes = {
-    onChange: PropTypes.func,
-    value: PropTypes.any,
-    defaultValue: PropTypes.any
-  };
+let ContactsResource = createResource(async path => {
+  let response = await fetch(`https://contacts.now.sh${path}`);
+  let json = await response.json();
+  return json;
+});
 
-  render() {
-    const isOpen = false;
-    return (
-      <div className="select">
-        <button className="label">
-          label <span className="arrow">▾</span>
-        </button>
-        {isOpen && <ul className="options">{this.props.children}</ul>}
-      </div>
-    );
-  }
+function Home() {
+  let { contacts } = ContactsResource.read(cache, "/contacts");
+  return (
+    <div>
+      <h1>Contacts</h1>
+      <ul>
+        {contacts.map(contact => (
+          <li key={contact.id}>
+            <Link to={contact.id}>
+              {contact.first} {contact.last}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
-class Option extends React.Component {
-  render() {
-    return <li className="option">{this.props.children}</li>;
+let FAKE_DATA = {
+  contact: {
+    first: "Ryan",
+    last: "Florence",
+    avatar: "https://placekitten.com/510/510"
   }
+};
+
+function Contact({ id }) {
+  // don't use FAKE_DATA, use `ContactsResource`
+  let { contact } = FAKE_DATA;
+  return (
+    <div>
+      <h1>
+        {contact.first} {contact.last}
+      </h1>
+      <p>
+        <img
+          alt={`${contact.first} smiling, maybe`}
+          height="250"
+          src={contact.avatar}
+        />
+      </p>
+      <p>
+        <Link to="/">Home</Link>
+      </p>
+    </div>
+  );
 }
 
-class App extends React.Component {
-  state = {
-    selectValue: "dosa"
-  };
-
-  setToMintChutney = () => {
-    this.setState({
-      selectValue: "mint-chutney"
-    });
-  };
-
-  render() {
-    return (
-      <div className="app">
-        <div className="block">
-          <h2>Uncontrolled</h2>
-          <Select defaultValue="tikka-masala">
-            <Option value="tikka-masala">Tikka Masala</Option>
-            <Option value="tandoori-chicken">Tandoori Chicken</Option>
-            <Option value="dosa">Dosa</Option>
-            <Option value="mint-chutney">Mint Chutney</Option>
-          </Select>
-        </div>
-
-        <div className="block">
-          <h2>Controlled</h2>
-          <p>
-            <button onClick={this.setToMintChutney}>Set to Mint Chutney</button>
-          </p>
-          <Select
-            value={this.state.selectValue}
-            onChange={selectValue => {
-              this.setState({ selectValue });
-            }}
-          >
-            <Option value="tikka-masala">Tikka Masala</Option>
-            <Option value="tandoori-chicken">Tandoori Chicken</Option>
-            <Option value="dosa">Dosa</Option>
-            <Option value="mint-chutney">Mint Chutney</Option>
-          </Select>
-        </div>
-      </div>
-    );
-  }
-}
-
-export default App;
+export default () => (
+  <Router>
+    <Home path="/" />
+    <Contact path=":id" />
+  </Router>
+);
