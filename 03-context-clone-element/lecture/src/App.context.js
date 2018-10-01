@@ -1,89 +1,86 @@
-import React, { Component } from "react";
+import React, {
+  Component,
+  createContext
+} from "react";
 import FaAutomobile from "react-icons/lib/fa/automobile";
 import FaBed from "react-icons/lib/fa/bed";
 import FaPlane from "react-icons/lib/fa/plane";
 import FaSpaceShuttle from "react-icons/lib/fa/space-shuttle";
 import * as text from "./lib/text";
 
+let TabsContext = createContext();
+
 class Tabs extends Component {
   state = {
-    activeIndex: 0
+    activeIndex: 0,
+    selectTabIndex: activeIndex => {
+      this.setState({ activeIndex });
+    }
   };
 
-  selectTabIndex = activeIndex => {
-    this.setState({ activeIndex });
-  };
-
   render() {
-    const children = React.Children.map(this.props.children, child => {
-      return React.cloneElement(child, {
-        activeIndex: this.state.activeIndex,
-        onSelectTab: this.selectTabIndex
-      });
-    });
-    return <div className="Tabs">{children}</div>;
-  }
-}
-
-class TabList extends Component {
-  render() {
-    const { activeIndex } = this.props;
-    const children = React.Children.map(this.props.children, (child, index) => {
-      return React.cloneElement(child, {
-        isActive: index === activeIndex,
-        onSelect: () => this.props.onSelectTab(index)
-      });
-    });
-    return <div className="tabs">{children}</div>;
-  }
-}
-
-class Tab extends Component {
-  render() {
-    const { isActive, isDisabled, onSelect } = this.props;
     return (
-      <div
-        className={
-          isDisabled ? "tab disabled" : isActive ? "tab active" : "tab"
-        }
-        onClick={isDisabled ? null : onSelect}
-      >
-        {this.props.children}
-      </div>
+      <TabsContext.Provider value={this.state}>
+        <div className="Tabs">
+          {this.props.children}
+        </div>
+      </TabsContext.Provider>
     );
   }
 }
 
-class TabPanels extends Component {
-  render() {
-    const { activeIndex, children } = this.props;
-    return <div className="panels">{children[activeIndex]}</div>;
-  }
-}
+let TabList = props => {
+  return (
+    <TabsContext.Consumer>
+      {context => {
+        let children = React.Children.map(
+          props.children,
+          (child, index) => {
+            return React.cloneElement(child, {
+              isActive: index === context.activeIndex,
+              onActivate: () =>
+                context.selectTabIndex(index)
+            });
+          }
+        );
+        return <div className="tabs">{children}</div>;
+      }}
+    </TabsContext.Consumer>
+  );
+};
 
-class TabPanel extends Component {
-  render() {
-    return this.props.children;
-  }
-}
+let Tab = props => {
+  const isDisabled = props.isDisabled;
+  const isActive = props.isActive;
+  return (
+    <div
+      className={
+        isDisabled
+          ? "tab disabled"
+          : isActive ? "tab active" : "tab"
+      }
+      onClick={
+        isDisabled ? undefined : props.onActivate
+      }
+    >
+      {props.children}
+    </div>
+  );
+};
 
-class DataTabs extends Component {
-  render() {
-    const { data } = this.props;
-    return (
-      <Tabs>
-        <TabList>
-          {data.map((tab, index) => <Tab key={index}>{tab.label}</Tab>)}
-        </TabList>
-        <TabPanels>
-          {data.map((tab, index) => (
-            <TabPanel key={index}>{tab.content}</TabPanel>
-          ))}
-        </TabPanels>
-      </Tabs>
-    );
-  }
-}
+let TabPanels = props => {
+  return (
+    <TabsContext.Consumer>
+      {context => (
+        <div className="panels">
+          {props.children[context.activeIndex]}
+        </div>
+      )}
+    </TabsContext.Consumer>
+  );
+};
+
+let TabPanel = props => props.children;
 
 class App extends Component {
   render() {
@@ -106,7 +103,30 @@ class App extends Component {
           </TabList>
           <TabPanels>
             <TabPanel>{text.cars}</TabPanel>
-            <TabPanel>{text.hotels}</TabPanel>
+            <TabPanel>
+              <Tabs>
+                <TabList>
+                  <Tab>
+                    <FaAutomobile />
+                  </Tab>
+                  <Tab isDisabled>
+                    <FaBed />
+                  </Tab>
+                  <Tab>
+                    <FaPlane />
+                  </Tab>
+                  <Tab>
+                    <FaSpaceShuttle />
+                  </Tab>
+                </TabList>
+                <TabPanels>
+                  <TabPanel>{text.cars}</TabPanel>
+                  <TabPanel>{text.hotels}</TabPanel>
+                  <TabPanel>{text.flights}</TabPanel>
+                  <TabPanel>{text.space}</TabPanel>
+                </TabPanels>
+              </Tabs>
+            </TabPanel>
             <TabPanel>{text.flights}</TabPanel>
             <TabPanel>{text.space}</TabPanel>
           </TabPanels>
