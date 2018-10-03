@@ -1,16 +1,29 @@
 /*
 
 Have `Portal` create a new DOM element, append it to document.body and then
-render its children into a portal.
+render its children into a portal. We want to have portal create the new dom
+node when it mounts, and remove it when it unmounts.
 
-You'll also want to use `<Rect>` to know the styles too apply to the menu to
-display by the button using `rect.left` and `rect.top`. Check out the docs here
-to know how to use it: https://ui.reach.tech/rect
+Tips:
+
+- in componentDidMount, create a new dom node and append it to the body
+  - `document.createElement('div')`
+  - `document.body.append(node)`
+- in componentWillUnmount, remove the node from the body with
+  `document.body.removeChild(node)`
+- On the intitial render you won't have a dom node yet, so you'll need
+  to manage some state to decide to call `createPortal` or not.
+
+Finally, the menu will be rendered out of DOM context so the styles will be all
+wrong, you'll need to provide a `style` prop with fixed position and left/top
+values.  To help out, we've imported `Rect`. Go check the docs for Rect
+(https://ui.reach.tech/rect) and then use it to put the menu by the button.
 
 */
 
 import React from "react";
-import PropTypes from "prop-types";
+import { createPortal } from "react-dom";
+import Rect from "@reach/rect";
 
 class Portal extends React.Component {
   render() {
@@ -19,12 +32,6 @@ class Portal extends React.Component {
 }
 
 class Select extends React.Component {
-  static propTypes = {
-    onChange: PropTypes.func,
-    value: PropTypes.any,
-    defaultValue: PropTypes.any
-  };
-
   state = {
     value: this.props.defaultValue,
     isOpen: false
@@ -36,26 +43,18 @@ class Select extends React.Component {
     });
   };
 
-  isControlled() {
-    return this.props.value != null;
-  }
-
   render() {
     const { isOpen } = this.state;
     let label;
     const children = React.Children.map(this.props.children, child => {
-      const { value } = this.isControlled() ? this.props : this.state;
+      const { value } = this.state;
       if (child.props.value === value) {
         label = child.props.children;
       }
 
       return React.cloneElement(child, {
         onSelect: () => {
-          if (this.isControlled()) {
-            this.props.onChange(child.props.value);
-          } else {
-            this.setState({ value: child.props.value });
-          }
+          this.setState({ value: child.props.value });
         }
       });
     });
