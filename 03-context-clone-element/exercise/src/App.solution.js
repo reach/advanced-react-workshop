@@ -1,67 +1,60 @@
-import React from "react";
+import React, { Component } from "react";
+import FaPlay from "react-icons/lib/fa/play";
+import FaPause from "react-icons/lib/fa/pause";
+import FaForward from "react-icons/lib/fa/forward";
+import FaBackward from "react-icons/lib/fa/backward";
 
-class Select extends React.Component {
+class RadioGroup extends Component {
   state = {
-    value: this.props.defaultValue,
-    isOpen: false
-  };
-
-  handleToggle = () => {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
+    value: this.props.defaultValue
   };
 
   render() {
-    const { isOpen } = this.state;
-    let label;
     const children = React.Children.map(this.props.children, child => {
-      const { value } = this.state;
-      if (child.props.value === value) {
-        label = child.props.children;
-      }
-
       return React.cloneElement(child, {
-        onSelect: () => {
-          this.setState({ value: child.props.value });
-        }
+        isActive: child.props.value === this.state.value,
+        onSelect: () => this.setState({ value: child.props.value })
       });
     });
-
     return (
-      <div onClick={this.handleToggle} className="select">
-        <button className="label">
-          {label} <span className="arrow">▾</span>
-        </button>
-        {isOpen && <ul className="options">{children}</ul>}
-      </div>
+      <fieldset className="radio-group">
+        <legend>{this.props.legend}</legend>
+        {children}
+      </fieldset>
     );
   }
 }
 
-class Option extends React.Component {
+class RadioButton extends Component {
   render() {
+    const { isActive, onSelect } = this.props;
+    const className = "radio-button " + (isActive ? "active" : "");
     return (
-      <li className="option" onClick={this.props.onSelect}>
+      <button className={className} onClick={onSelect}>
         {this.props.children}
-      </li>
+      </button>
     );
   }
 }
 
-class App extends React.Component {
+class App extends Component {
   render() {
     return (
-      <div className="app">
-        <div className="block">
-          <h2>Select / Option</h2>
-          <Select defaultValue="tikka-masala">
-            <Option value="tikka-masala">Tikka Masala</Option>
-            <Option value="tandoori-chicken">Tandoori Chicken</Option>
-            <Option value="dosa">Dosa</Option>
-            <Option value="mint-chutney">Mint Chutney</Option>
-          </Select>
-        </div>
+      <div>
+        <RadioGroup defaultValue="pause" legend="Radio Group">
+          <RadioButton value="back">
+            <FaBackward />
+          </RadioButton>
+          <RadioButton value="play">
+            <FaPlay />
+          </RadioButton>
+          <RadioButton value="pause">
+            <FaPause />
+          </RadioButton>
+          <RadioButton value="forward">
+            <FaForward />
+          </RadioButton>
+        </RadioGroup>
       </div>
     );
   }

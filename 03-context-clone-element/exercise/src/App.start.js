@@ -1,72 +1,46 @@
-/*
+import React, { Component } from "react";
+import FaPlay from "react-icons/lib/fa/play";
+import FaPause from "react-icons/lib/fa/pause";
+import FaForward from "react-icons/lib/fa/forward";
+import FaBackward from "react-icons/lib/fa/backward";
 
-Make this component work like a normal <select><option/></select>.
-
-1. Get the label to display correctly.
-
-Tips:
-- You can use React.Children.map or React.Children.forEach to iterate over
-  the children to find the child with a value that matches the value in state.
-- the `child` is an object you can inspect, like `child.props.value` and
-  `child.props.children`
-
-2. When you click the button the menu should open
-
-3. When you click an option the component should close and update the value in
-   state
-
-*/
-
-import React from "react";
-
-class Select extends React.Component {
-  state = {
-    isOpen: false,
-    value: this.props.defaultValue
-  };
-
+class RadioGroup extends Component {
   render() {
-    const { isOpen } = this.state;
     return (
-      <div className="select">
-        <button className="label">
-          label <span className="arrow">▾</span>
-        </button>
-        {isOpen && <ul className="options">{this.props.children}</ul>}
-      </div>
+      <fieldset className="radio-group">
+        <legend>{this.props.legend}</legend>
+        {this.props.children}
+      </fieldset>
     );
   }
 }
 
-class Option extends React.Component {
+class RadioButton extends Component {
   render() {
-    return <li className="option">{this.props.children}</li>;
+    const isActive = false; // <-- should come from somewhere
+    const className = "radio-button " + (isActive ? "active" : "");
+    return <button className={className}>{this.props.children}</button>;
   }
 }
 
-class App extends React.Component {
-  state = {
-    selectValue: "dosa"
-  };
-
-  setToMintChutney = () => {
-    this.setState({
-      selectValue: "mint-chutney"
-    });
-  };
-
+class App extends Component {
   render() {
     return (
-      <div className="app">
-        <div className="block">
-          <h2>Select / Option</h2>
-          <Select defaultValue="tikka-masala">
-            <Option value="tikka-masala">Tikka Masala</Option>
-            <Option value="tandoori-chicken">Tandoori Chicken</Option>
-            <Option value="dosa">Dosa</Option>
-            <Option value="mint-chutney">Mint Chutney</Option>
-          </Select>
-        </div>
+      <div>
+        <RadioGroup legend="Radio Group">
+          <RadioButton value="back">
+            <FaBackward />
+          </RadioButton>
+          <RadioButton value="play">
+            <FaPlay />
+          </RadioButton>
+          <RadioButton value="pause">
+            <FaPause />
+          </RadioButton>
+          <RadioButton value="forward">
+            <FaForward />
+          </RadioButton>
+        </RadioGroup>
       </div>
     );
   }
