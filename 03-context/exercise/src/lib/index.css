@@ -1,0 +1,51 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  background: radial-gradient(ellipse at center, #fff 0%, #ddd 100%);
+  height: 100vh;
+}
+
+.exercise {
+  padding-top: 40px;
+  width: 500px;
+  margin: auto;
+}
+
+.audio-player {
+  display: block;
+  padding: 10px;
+  margin: 40px 0;
+}
+
+.progress {
+  width: 100%;
+  border: 1px solid #ccc;
+  background: #fff;
+  margin: 0.5em 0;
+}
+
+.progress-bar {
+  height: 1em;
+  background: hsl(200, 50%, 50%);
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  padding: none;
+  display: inline-block;
+  font: inherit;
+  color: #666;
+  line-height: 0;
+  padding: 0;
+  vertical-align: bottom;
+}
+
+.icon-button:active {
+  color: #333;
+  outline: none;
+}
+
+.icon-button:disabled {
+  color: #ccc;
+}
