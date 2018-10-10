@@ -2,7 +2,7 @@
 
 Instructions:
 
-Goal: Update the document title to say "Todos (todos.length)" as the data changes.
+Goal: Update the document title to say "Todos ([incomplete])" as the data changes.
 
 - Make a `<DocumentTitle/>` component
 - Pass it a prop with the string for the title
