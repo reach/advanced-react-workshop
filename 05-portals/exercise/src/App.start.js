@@ -11,8 +11,6 @@ Tips:
   - `document.body.append(node)`
 - in componentWillUnmount, remove the node from the body with
   `document.body.removeChild(node)`
-- On the intitial render you won't have a dom node yet, so you'll need
-  to manage some state to decide to call `createPortal` or not.
 
 Finally, the menu will be rendered out of DOM context so the styles will be all
 wrong, you'll need to provide a `style` prop with fixed position and left/top
