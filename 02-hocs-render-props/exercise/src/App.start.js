@@ -1,7 +1,7 @@
 import React from "react";
 import createMediaListener from "./lib/createMediaListener";
 import { Galaxy, Trees, Earth } from "./lib/screens";
-import { CSSTransition } from "react-transition-group";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 const media = createMediaListener({
   big: "(min-width : 1000px)",
@@ -25,15 +25,34 @@ class App extends React.Component {
     const { media } = this.state;
 
     return (
-      <CSSTransition classNames="fade" timeout={300}>
-        {media.big ? (
-          <Galaxy key="galaxy" />
-        ) : media.tiny ? (
-          <Trees key="trees" />
-        ) : (
-          <Earth key="earth" />
-        )}
-      </CSSTransition>
+      <TransitionGroup>
+        <div>
+          <CSSTransition
+            in={media.big}
+            classNames="fade"
+            timeout={300}
+            unmountOnExit
+          >
+            <Galaxy key="galaxy" />
+          </CSSTransition>
+          <CSSTransition
+            in={media.tiny}
+            classNames="fade"
+            timeout={300}
+            unmountOnExit
+          >
+            <Trees key="trees" />
+          </CSSTransition>
+          <CSSTransition
+            in={!media.big && !media.tiny}
+            classNames="fade"
+            timeout={300}
+            unmountOnExit
+          >
+            <Earth key="earth" />
+          </CSSTransition>
+        </div>
+      </TransitionGroup>
     );
   }
 }
