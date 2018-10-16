@@ -1,234 +1,159 @@
-/* eslint-disable jsx-a11y/aria-activedescendant-has-tabindex  */
-/* eslint-disable jsx-a11y/role-has-required-aria-props  */
-/* eslint-disable react/no-direct-mutation-state  */
+/*
+
+Have `Portal` create a new DOM element, append it to document.body and then
+render its children into a portal. We want to have portal create the new dom
+node when it mounts, and remove it when it unmounts.
+
+Tips:
+
+- in componentDidMount, create a new dom node and append it to the body
+  - `document.createElement('div')`
+  - `document.body.append(node)`
+- in componentWillUnmount, remove the node from the body with
+  `document.body.removeChild(node)`
+
+Finally, the menu will be rendered out of DOM context so the styles will be all
+wrong, you'll need to provide a `style` prop with fixed position and left/top
+values.  To help out, we've imported `Rect`. Go check the docs for Rect
+(https://ui.reach.tech/rect) and then use it to put the menu by the button.
+
+*/
+
 import React from "react";
-import { createPortal } from "react-dom";
-import PropTypes from "prop-types";
 import Rect from "@reach/rect";
 
-class Portal extends React.Component {
-  state = {
-    mounted: false
-  };
-
-  componentDidMount() {
-    this.node = document.createElement("div");
-    document.body.appendChild(this.node);
-    this.setState({ mounted: true });
-  }
-
-  componentWillUnmount() {
-    document.body.removeChild(this.node);
-  }
-
-  render() {
-    return this.state.mounted
-      ? createPortal(this.props.children, this.node)
-      : null;
-  }
+function findIndexFromValue(children, value) {
+  let index = -1;
+  React.Children.forEach(children, (child, childIndex) => {
+    if (child.props.value === value) {
+      index = childIndex;
+    }
+  });
+  return index;
 }
 
-const findSelectionIndex = (children, value) => {
-  let preSelectionIndex = -1;
-  React.Children.forEach(children, (child, index) => {
-    if (child.props.value === value) {
-      preSelectionIndex = index;
-    }
-  });
-  return preSelectionIndex;
-};
-
-const findValueFromIndex = (children, preSelectionIndex) => {
-  let value;
-  React.Children.forEach(children, (child, index) => {
-    if (index === preSelectionIndex) {
-      value = child.props.value;
-    }
-  });
-  return value;
-};
+function findValueFromIndex(children, index) {
+  return React.Children.toArray(children).reduce(
+    (nextValue, child, childIndex) => {
+      if (index === childIndex) {
+        return child.props.value;
+      }
+      return nextValue;
+    },
+    null
+  );
+}
 
 class Select extends React.Component {
-  static propTypes = {
-    onChange: PropTypes.func,
-    value: PropTypes.any,
-    defaultValue: PropTypes.any
-  };
-
   state = {
     value: this.props.defaultValue,
-    isOpen: false,
-    preSelectionIndex: findSelectionIndex(
+    highlightedIndex: findIndexFromValue(
       this.props.children,
       this.props.defaultValue
     ),
-    refs: {
-      list: null,
-      button: null
-    }
+    isOpen: false
   };
 
-  rootId = Math.random()
-    .toString(32)
-    .substr(2, 8);
-
-  open = index => {
+  handleToggle = () => {
     this.setState({
-      isOpen: true,
-      preSelectionIndex:
-        index != null
-          ? index
-          : findSelectionIndex(
-              this.props.children,
-              this.isControlled() ? this.props.value : this.state.value
-            )
+      isOpen: !this.state.isOpen
     });
-  };
-
-  isControlled() {
-    return this.props.value != null;
-  }
-
-  handleListBlur = () => {
-    this.setState({ isOpen: false });
-  };
-
-  handleButtonKeyDown = event => {
-    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-      event.preventDefault();
-      this.open();
-    }
-  };
-
-  handleListKeyDown = event => {
-    const prevent = ["Tab", "ArrowDown", "ArrowUp"];
-
-    if (prevent.includes(event.key)) {
-      event.preventDefault();
-    }
-
-    if (event.key === "ArrowDown") {
-      const { preSelectionIndex } = this.state;
-      const { children } = this.props;
-      let nextIndex = preSelectionIndex + 1;
-      if (nextIndex < React.Children.count(children)) {
-        this.setState({ preSelectionIndex: nextIndex });
-      }
-    }
-
-    if (event.key === "ArrowUp") {
-      const { preSelectionIndex } = this.state;
-      let nextIndex = preSelectionIndex - 1;
-      if (nextIndex !== -1) {
-        this.setState({ preSelectionIndex: nextIndex });
-      }
-    }
-
-    if (event.key === "Enter") {
-      event.preventDefault();
-      this.selectAndClose();
-    }
-
-    if (event.key === "Escape") {
-      this.setState({ isOpen: false });
-    }
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.isOpen && !this.state.isOpen) {
-      this.state.refs.button.focus();
-    } else if (this.state.isOpen && !prevState.isOpen) {
-      this.state.refs.list.focus();
+    if (!prevState.isOpen && this.state.isOpen) {
+      this.listRef.focus();
+    } else if (prevState.isOpen && !this.state.isOpen) {
+      this.buttonRef.focus();
     }
   }
 
-  selectAndClose = () => {
-    const { preSelectionIndex } = this.state;
-    const value = findValueFromIndex(this.props.children, preSelectionIndex);
-    if (this.props.onChange) {
-      this.props.onChange(value);
-    }
-    this.setState({
-      value: this.isControlled() ? undefined : value,
-      isOpen: false
-    });
-  };
-
   render() {
-    const { labelledby } = this.props;
-    const { isOpen, preSelectionIndex } = this.state;
-    const { rootId } = this;
+    const { isOpen, value, highlightedIndex } = this.state;
     let label;
-    let activedescendant;
-    const children = React.Children.map(this.props.children, (child, index) => {
-      // side effect in a map
-      const { value } = this.isControlled() ? this.props : this.state;
-      const id = child.props.id || `${rootId}-${index}`;
-      const isSelected = child.props.value === value;
-      const isSelectionIndex = index === preSelectionIndex;
+    let activeDescendantId;
 
-      if (isSelected) {
+    const children = React.Children.map(this.props.children, (child, index) => {
+      let isHighlighted = index === highlightedIndex;
+
+      if (isHighlighted) {
+        activeDescendantId = child.props.value;
+      }
+
+      if (child.props.value === value) {
         label = child.props.children;
       }
 
-      if (isSelectionIndex) {
-        activedescendant = id;
-      }
-
       return React.cloneElement(child, {
-        id,
-        isSelected,
-        isSelectionIndex,
-        onPreSelect: () => {
-          if (!isSelectionIndex) {
-            this.setState({ preSelectionIndex: index });
-          }
-        },
-        onSelect: this.selectAndClose
+        isHighlighted: isHighlighted,
+        onSelect: () => {
+          this.setState({ value: child.props.value });
+        }
       });
     });
 
     return (
       <Rect>
-        {({ rect, ref }) => (
+        {({ ref, rect }) => (
           <div className="select">
             <button
-              ref={node => {
-                this.state.refs.button = node;
-                ref(node);
-              }}
-              className="label"
-              aria-haspopup="true"
+              aria-haspopup="listbox"
               aria-expanded={isOpen}
-              aria-labelledby={labelledby}
-              onClick={() => {
-                // don't like the flash when the mouseMove hits on click,
-                // so we send 0 in
-                this.open(0);
+              ref={node => {
+                ref(node);
+                this.buttonRef = node;
               }}
-              onKeyDown={this.handleButtonKeyDown}
+              onClick={this.handleToggle}
+              className="label"
             >
-              {label}
-              <span className="arrow" aria-hidden="true">
-                {" "}
+              {label}{" "}
+              <span aria-hidden="true" className="arrow">
                 ▾
               </span>
             </button>
             {isOpen && (
               <ul
-                ref={n => (this.state.refs.list = n)}
-                className="options"
+                role="listbox"
+                tabIndex="-1"
+                aria-activedescendant={activeDescendantId}
+                onKeyDown={event => {
+                  if (event.key === "Escape") {
+                    this.setState({ isOpen: false });
+                  } else if (event.key === "ArrowDown") {
+                    event.preventDefault();
+                    let childCount = React.Children.count(this.props.children);
+                    if (highlightedIndex !== childCount - 1) {
+                      this.setState({
+                        highlightedIndex: highlightedIndex + 1
+                      });
+                    }
+                  } else if (event.key === "ArrowUp") {
+                    event.preventDefault();
+                    if (highlightedIndex !== 0) {
+                      this.setState({
+                        highlightedIndex: highlightedIndex - 1
+                      });
+                    }
+                  } else if (event.key === "Enter") {
+                    event.preventDefault();
+                    this.setState({
+                      isOpen: false,
+                      value: findValueFromIndex(
+                        this.props.children,
+                        highlightedIndex
+                      )
+                    });
+                  }
+                }}
+                ref={node => {
+                  this.listRef = node;
+                }}
                 style={{
-                  position: "absolute",
+                  position: "fixed",
                   top: rect.top,
                   left: rect.left
                 }}
-                role="listbox"
-                tabIndex="-1"
-                aria-labelledby={labelledby}
-                aria-activedescendant={activedescendant}
-                onBlur={this.handleListBlur}
-                onKeyDown={this.handleListKeyDown}
+                className="options"
               >
                 {children}
               </ul>
@@ -242,29 +167,13 @@ class Select extends React.Component {
 
 class Option extends React.Component {
   render() {
-    const {
-      id,
-      isSelected,
-      isSelectionIndex,
-      onSelect,
-      onPreSelect
-    } = this.props;
+    let { isHighlighted } = this.props;
     return (
       <li
         role="option"
-        id={id}
-        className={[
-          "option",
-          isSelected ? "selected" : "",
-          isSelectionIndex ? "pre-selection" : ""
-        ].join(" ")}
-        onClick={onSelect}
-        onMouseMove={
-          // mouseMove instead of mouseEnter so switching from
-          // keyboard to mouse works w/o having to leave and enter
-          // the element to trigger selection
-          onPreSelect
-        }
+        aria-selected={isHighlighted}
+        className={isHighlighted ? "option highlighted" : "option"}
+        onClick={this.props.onSelect}
       >
         {this.props.children}
       </li>
@@ -273,22 +182,12 @@ class Option extends React.Component {
 }
 
 class App extends React.Component {
-  state = {
-    selectValue: "dosa"
-  };
-
-  setToMintChutney = () => {
-    this.setState({
-      selectValue: "mint-chutney"
-    });
-  };
-
   render() {
     return (
       <div className="app">
         <div className="block">
-          <h2 id="title">WAI-ARIA</h2>
-          <Select defaultValue="tikka-masala" labelledby="title">
+          <h2>Portal Party</h2>
+          <Select defaultValue="tikka-masala">
             <Option value="tikka-masala">Tikka Masala</Option>
             <Option value="tandoori-chicken">Tandoori Chicken</Option>
             <Option value="dosa">Dosa</Option>
