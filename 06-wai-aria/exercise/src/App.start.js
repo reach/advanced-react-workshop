@@ -1,3 +1,23 @@
+/*
+
+Follow the WAI ARIA Radio Group example at:
+https://www.w3.org/TR/wai-aria-practices-1.1/examples/radio/radio-1/radio-1.html
+
+- Turn the span into a button to get keyboard and focus events
+- Use tabIndex to allow only the active button to be tabbable
+- Use left/right arrows to select the next/previous radio button
+  - Tip: you can figure out the next value with React.Children.forEach(fn),
+    or React.Children.toArray(children).reduce(fn)
+- Move the focus in cDU to the newly selected item
+  - Tip: do it in RadioOption not RadioGroup
+  - Tip: you'll need a ref
+- Add the aria attributes
+  - radiogroup
+  - radio
+  - aria-checked
+  - aria-label on the icons
+
+*/
 import React, { Component } from "react";
 import FaPlay from "react-icons/lib/fa/play";
 import FaPause from "react-icons/lib/fa/pause";
