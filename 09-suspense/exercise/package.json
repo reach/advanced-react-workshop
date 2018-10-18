@@ -1,5 +1,5 @@
 {
-  "name": "01",
+  "name": "09",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -9,7 +9,7 @@
     "simple-cache-provider": "../vendor/simple-cache-provider"
   },
   "devDependencies": {
-    "react-scripts": "1.0.10"
+    "react-scripts": "2.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

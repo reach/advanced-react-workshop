@@ -1,9 +1,9 @@
-import React from "react";
+import React, { Component } from "react";
 import LoadingDots from "./lib/LoadingDots";
 import Map from "./lib/Map";
 
 let withGeo = Comp =>
-  class GeoPosition extends React.Component {
+  class GeoPosition extends Component {
     state = {
       coords: null,
       error: null
@@ -34,7 +34,7 @@ let withGeo = Comp =>
     }
   };
 
-class App extends React.Component {
+class App extends Component {
   render() {
     return (
       <div className="app">

@@ -1,8 +1,8 @@
 // modified from http://codepen.io/enxaneta/pen/jbVLGb/, see copyright there
 
-import React from "react";
+import React, { Component } from "react";
 
-class SineWave extends React.Component {
+class SineWave extends Component {
   componentDidMount() {
     this.ctx = this.node.getContext("2d");
     const { width, height } = this.node.getBoundingClientRect();

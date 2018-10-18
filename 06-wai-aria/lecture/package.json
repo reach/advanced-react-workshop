@@ -1,5 +1,5 @@
 {
-  "name": "05",
+  "name": "06",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -9,7 +9,7 @@
     "react-google-maps": "^7.2.0"
   },
   "devDependencies": {
-    "react-scripts": "1.0.10"
+    "react-scripts": "2.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -29,7 +29,7 @@ class Tabs extends Component {
   }
 }
 
-let TabList = props => {
+let TabList = (props) => {
   return (
     <TabsContext.Consumer>
       {context => {
@@ -49,7 +49,7 @@ let TabList = props => {
   );
 };
 
-let Tab = props => {
+let Tab = (props) => {
   const isDisabled = props.isDisabled;
   const isActive = props.isActive;
   return (
@@ -68,7 +68,7 @@ let Tab = props => {
   );
 };
 
-let TabPanels = props => {
+let TabPanels = (props) => {
   return (
     <TabsContext.Consumer>
       {context => (
@@ -80,7 +80,7 @@ let TabPanels = props => {
   );
 };
 
-let TabPanel = props => props.children;
+let TabPanel = (props) => props.children;
 
 class App extends Component {
   render() {

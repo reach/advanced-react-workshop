@@ -1,8 +1,8 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Rect from "@reach/rect";
 
-class Select extends React.Component {
+class Select extends Component {
   static propTypes = {
     onChange: PropTypes.func,
     value: PropTypes.any,
@@ -70,7 +70,7 @@ class Select extends React.Component {
   }
 }
 
-class Option extends React.Component {
+class Option extends Component {
   render() {
     return (
       <li className="option" onClick={this.props.onSelect}>
@@ -80,7 +80,7 @@ class Option extends React.Component {
   }
 }
 
-class App extends React.Component {
+class App extends Component {
   state = {
     selectValue: "dosa"
   };

@@ -1,9 +1,9 @@
-import React from "react";
+import React, { Component } from "react";
 import LoadingDots from "./lib/LoadingDots";
 import Map from "./lib/Map";
 import getAddressFromCoords from "./lib/getAddressFromCoords";
 
-class GeoPosition extends React.Component {
+class GeoPosition extends Component {
   state = {
     coords: null,
     error: null
@@ -34,7 +34,7 @@ class GeoPosition extends React.Component {
   }
 }
 
-class Address extends React.Component {
+class Address extends Component {
   state = {
     address: null
   };
@@ -51,7 +51,7 @@ class Address extends React.Component {
   }
 }
 
-class App extends React.Component {
+class App extends Component {
   render() {
     return (
       <GeoPosition>

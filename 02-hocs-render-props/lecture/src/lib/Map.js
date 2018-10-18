@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 
 import {
   withGoogleMap,
@@ -29,7 +29,7 @@ const InnerMap = withGoogleMap(({ lat, lng, info }) => (
   </GoogleMap>
 ));
 
-class Map extends React.Component {
+class Map extends Component {
   componentWillMount() {
     if (!window.google) {
       loadMaps(() => {

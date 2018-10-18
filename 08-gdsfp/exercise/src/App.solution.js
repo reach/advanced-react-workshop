@@ -27,7 +27,7 @@ class App extends Component {
   }
 }
 
-class PriceDisplay extends React.Component {
+class PriceDisplay extends Component {
   state = {
     price: this.props.price,
     direction: "initial"

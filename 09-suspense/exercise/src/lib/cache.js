@@ -7,4 +7,3 @@ function initCache() {
 }
 
 initCache();
-

@@ -1,8 +1,8 @@
-import React from "react";
+import React, { Component } from "react";
 import createOscillator from "./lib/createOscillator";
 import SineWave from "./lib/SineWave";
 
-class Tone extends React.Component {
+class Tone extends Component {
   oscillator = createOscillator();
 
   componentDidMount() {
@@ -29,7 +29,7 @@ class Tone extends React.Component {
   }
 }
 
-class App extends React.Component {
+class App extends Component {
   state = {
     isPlaying: false,
     pitch: 0,

@@ -8,7 +8,7 @@
     "react-transition-group": "^2.4.0"
   },
   "devDependencies": {
-    "react-scripts": "1.0.10"
+    "react-scripts": "2.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

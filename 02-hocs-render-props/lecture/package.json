@@ -8,7 +8,7 @@
     "react-google-maps": "^9.4.5"
   },
   "devDependencies": {
-    "react-scripts": "1.0.10"
+    "react-scripts": "2.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Component } from "react";
 
-class Dialog extends React.Component {
+class Dialog extends Component {
   render() {
     return (
       <div
@@ -39,7 +39,7 @@ let bustthisstuff = {
   position: "absolute"
 };
 
-class App extends React.Component {
+class App extends Component {
   state = {
     showDialog: false
   };

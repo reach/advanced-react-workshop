@@ -19,17 +19,17 @@ values.  To help out, we've imported `Rect`. Go check the docs for Rect
 
 */
 
-import React from "react";
+import React, { Component } from "react";
 import { createPortal } from "react-dom";
 import Rect from "@reach/rect";
 
-class Portal extends React.Component {
+class Portal extends Component {
   render() {
     return this.props.children;
   }
 }
 
-class Select extends React.Component {
+class Select extends Component {
   state = {
     value: this.props.defaultValue,
     isOpen: false
@@ -72,7 +72,7 @@ class Select extends React.Component {
   }
 }
 
-class Option extends React.Component {
+class Option extends Component {
   render() {
     return (
       <li className="option" onClick={this.props.onSelect}>
@@ -82,7 +82,7 @@ class Option extends React.Component {
   }
 }
 
-class App extends React.Component {
+class App extends Component {
   render() {
     return (
       <div className="app">
