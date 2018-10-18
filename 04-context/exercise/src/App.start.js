@@ -28,7 +28,7 @@ audio.duration
 // values to calculate relative mouse click position
 // on the progress bar
 event.clientX // left position *from window* of mouse click
-const rect = node.getBoundingClientRect()
+let rect = node.getBoundingClientRect()
 rect.left // left position *of node from window*
 rect.width // width of node
 ```
@@ -56,7 +56,7 @@ class AudioPlayer extends React.Component {
     return (
       <div className="audio-player">
         <audio
-          src={null}
+          src={this.props.source}
           onTimeUpdate={null}
           onLoadedData={null}
           onEnded={null}
@@ -149,7 +149,7 @@ class Progress extends React.Component {
   }
 }
 
-const Exercise = () => (
+let Exercise = () => (
   <div className="exercise">
     <AudioPlayer source={mario}>
       <Play /> <Pause /> <span className="player-text">Mario Bros. Remix</span>
