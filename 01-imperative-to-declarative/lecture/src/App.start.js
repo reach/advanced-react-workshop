@@ -1,7 +1,7 @@
-import React from "react";
+import React, { Component } from "react";
 import createOscillator from "./lib/createOscillator";
 
-class App extends React.Component {
+class App extends Component {
   oscillator = createOscillator();
 
   play = () => {

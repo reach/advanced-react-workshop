@@ -1,10 +1,10 @@
-import React from "react";
+import React, { Component } from "react";
 import { createPortal } from "react-dom";
 
 let portalNode = document.createElement("div");
 document.body.appendChild(portalNode);
 
-class Dialog extends React.Component {
+class Dialog extends Component {
   render() {
     return createPortal(
       <div
@@ -44,7 +44,7 @@ let bustthisstuff = {
   position: "absolute"
 };
 
-class App extends React.Component {
+class App extends Component {
   state = {
     showDialog: false
   };

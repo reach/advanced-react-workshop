@@ -43,7 +43,7 @@ Other notes about the `<audio/>` tag:
 Good luck!
 */
 
-import React from "react";
+import React, { Component } from "react";
 import podcast from "./lib/podcast.mp4";
 import mario from "./lib/mariobros.mp3";
 import FaPause from "react-icons/lib/fa/pause";
@@ -51,7 +51,7 @@ import FaPlay from "react-icons/lib/fa/play";
 import FaRepeat from "react-icons/lib/fa/repeat";
 import FaRotateLeft from "react-icons/lib/fa/rotate-left";
 
-class AudioPlayer extends React.Component {
+class AudioPlayer extends Component {
   render() {
     return (
       <div className="audio-player">
@@ -68,7 +68,7 @@ class AudioPlayer extends React.Component {
   }
 }
 
-class Play extends React.Component {
+class Play extends Component {
   render() {
     return (
       <button
@@ -83,7 +83,7 @@ class Play extends React.Component {
   }
 }
 
-class Pause extends React.Component {
+class Pause extends Component {
   render() {
     return (
       <button
@@ -98,13 +98,13 @@ class Pause extends React.Component {
   }
 }
 
-class PlayPause extends React.Component {
+class PlayPause extends Component {
   render() {
     return null;
   }
 }
 
-class JumpForward extends React.Component {
+class JumpForward extends Component {
   render() {
     return (
       <button
@@ -119,7 +119,7 @@ class JumpForward extends React.Component {
   }
 }
 
-class JumpBack extends React.Component {
+class JumpBack extends Component {
   render() {
     return (
       <button
@@ -134,7 +134,7 @@ class JumpBack extends React.Component {
   }
 }
 
-class Progress extends React.Component {
+class Progress extends Component {
   render() {
     return (
       <div className="progress" onClick={null}>

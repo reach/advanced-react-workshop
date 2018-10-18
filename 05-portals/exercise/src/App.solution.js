@@ -1,9 +1,9 @@
-import React from "react";
+import React, { Component } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 import Rect from "@reach/rect";
 
-class Portal extends React.Component {
+class Portal extends Component {
   state = {
     mounted: false
   };
@@ -25,7 +25,7 @@ class Portal extends React.Component {
   }
 }
 
-class Select extends React.Component {
+class Select extends Component {
   static propTypes = {
     onChange: PropTypes.func,
     value: PropTypes.any,
@@ -95,7 +95,7 @@ class Select extends React.Component {
   }
 }
 
-class Option extends React.Component {
+class Option extends Component {
   render() {
     return (
       <li className="option" onClick={this.props.onSelect}>
@@ -105,7 +105,7 @@ class Option extends React.Component {
   }
 }
 
-class App extends React.Component {
+class App extends Component {
   render() {
     return (
       <div className="app">

@@ -1,12 +1,14 @@
-import React from "react";
+import React, { Component } from "react";
 
-class LoadingDots extends React.Component {
+class LoadingDots extends Component {
   static defaultProps = {
     interval: 300,
     dots: 3
   };
 
-  state = { frame: 1 };
+  state = {
+    frame: 1
+  };
 
   componentDidMount() {
     this.interval = setInterval(() => {

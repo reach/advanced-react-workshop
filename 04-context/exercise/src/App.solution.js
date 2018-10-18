@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import podcast from "./lib/podcast.mp4";
 import mario from "./lib/mariobros.mp3";
 import FaPause from "react-icons/lib/fa/pause";
@@ -7,7 +7,7 @@ import FaRepeat from "react-icons/lib/fa/repeat";
 import FaRotateLeft from "react-icons/lib/fa/rotate-left";
 import { object } from "prop-types";
 
-class AudioPlayer extends React.Component {
+class AudioPlayer extends Component {
   static childContextTypes = {
     audio: object
   };
@@ -41,14 +41,14 @@ class AudioPlayer extends React.Component {
     };
   }
 
-  handleTimeUpdate = e => {
+  handleTimeUpdate = (event) => {
     this.setState({
       currentTime: this.audio.currentTime,
       duration: this.audio.duration
     });
   };
 
-  handleAudioLoaded = e => {
+  handleAudioLoaded = (event) => {
     this.setState({
       duration: this.audio.duration,
       loaded: true
@@ -77,7 +77,7 @@ class AudioPlayer extends React.Component {
   }
 }
 
-class Play extends React.Component {
+class Play extends Component {
   static contextTypes = {
     audio: object
   };
@@ -96,7 +96,7 @@ class Play extends React.Component {
   }
 }
 
-class Pause extends React.Component {
+class Pause extends Component {
   static contextTypes = {
     audio: object
   };
@@ -115,7 +115,7 @@ class Pause extends React.Component {
   }
 }
 
-class PlayPause extends React.Component {
+class PlayPause extends Component {
   static contextTypes = {
     audio: object
   };
@@ -126,7 +126,7 @@ class PlayPause extends React.Component {
   }
 }
 
-class JumpForward extends React.Component {
+class JumpForward extends Component {
   static contextTypes = {
     audio: object
   };
@@ -145,7 +145,7 @@ class JumpForward extends React.Component {
   }
 }
 
-class JumpBack extends React.Component {
+class JumpBack extends Component {
   static contextTypes = {
     audio: object
   };
@@ -164,15 +164,15 @@ class JumpBack extends React.Component {
   }
 }
 
-class Progress extends React.Component {
+class Progress extends Component {
   static contextTypes = {
     audio: object
   };
 
-  handleClick = e => {
+  handleClick = (event) => {
     const { audio } = this.context;
     const rect = this.node.getBoundingClientRect();
-    const clientLeft = e.clientX;
+    const clientLeft = event.clientX;
     const relativeLeft = clientLeft - rect.left;
     audio.setTime(relativeLeft / rect.width * audio.duration);
   };

@@ -1,9 +1,9 @@
-import React from "react";
+import React, { Component } from "react";
 import LoadingDots from "./lib/LoadingDots";
 import Map from "./lib/Map";
 import getAddressFromCoords from "./lib/getAddressFromCoords";
 
-class App extends React.Component {
+class App extends Component {
   state = {
     coords: null,
     error: null

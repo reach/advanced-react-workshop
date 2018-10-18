@@ -1,6 +1,6 @@
 import { createElement } from "glamor/react"; // eslint-disable-line
 /* @jsx createElement */
-import React, { Placeholder, lazy } from "react";
+import React, { Component, Placeholder, lazy } from "react";
 import { Router, Link } from "@reach/router";
 import Component from "@reach/component-component";
 import Spinner from "react-svg-spinner";
@@ -104,7 +104,7 @@ const Exercises = ({ workoutId }) => {
   return <ul>{exercises.map((exercise, i) => <li key={i}>{exercise}</li>)}</ul>;
 };
 
-class Workout extends React.Component {
+class Workout extends Component {
   render() {
     const { workoutId } = this.props;
 

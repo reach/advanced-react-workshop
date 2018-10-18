@@ -27,7 +27,7 @@ class App extends Component {
   }
 }
 
-class PriceDisplay extends React.Component {
+class PriceDisplay extends Component {
   render() {
     let direction = "up"; // get this from state instead
     return (
@@ -89,7 +89,7 @@ export default App;
 //   }
 // }
 
-// class PriceDisplay extends React.Component {
+// class PriceDisplay extends Component {
 //   state = {};
 
 //   static getDerivedStateFromProps(props, state, more) {

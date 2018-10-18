@@ -19,7 +19,7 @@ values.  To help out, we've imported `Rect`. Go check the docs for Rect
 
 */
 
-import React from "react";
+import React, { Component } from "react";
 import Rect from "@reach/rect";
 
 function findIndexFromValue(children, value) {
@@ -44,7 +44,7 @@ function findValueFromIndex(children, index) {
   );
 }
 
-class Select extends React.Component {
+class Select extends Component {
   state = {
     value: this.props.defaultValue,
     highlightedIndex: findIndexFromValue(
@@ -165,7 +165,7 @@ class Select extends React.Component {
   }
 }
 
-class Option extends React.Component {
+class Option extends Component {
   render() {
     let { isHighlighted } = this.props;
     return (
@@ -181,7 +181,7 @@ class Option extends React.Component {
   }
 }
 
-class App extends React.Component {
+class App extends Component {
   render() {
     return (
       <div className="app">
