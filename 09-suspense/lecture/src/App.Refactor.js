@@ -3,12 +3,11 @@
 
 import { createElement } from "glamor/react"; // eslint-disable-line
 /* @jsx createElement */
-import React, { Placeholder } from "react";
+import React, { Suspense } from "react";
 import { Router, Link } from "@reach/router";
 import Spinner from "react-svg-spinner";
 import Competitions from "./lib/Competitions";
 import ManageScroll from "./lib/ManageScroll";
-import { cache } from "./lib/cache";
 
 import {
   fetchWorkout,
@@ -40,7 +39,6 @@ class Workout extends React.Component {
       this.setState({ exercises });
     });
     fetchNextWorkout(workoutId).then(nextWorkout => {
-      console.log(nextWorkout);
       this.setState({ nextWorkout });
     });
   }
@@ -115,7 +113,7 @@ const Home = () => (
 );
 
 const Workouts = () => {
-  const workouts = WorkoutsResource.read(cache, 10);
+  const workouts = WorkoutsResource.read(10);
   return (
     <div>
       <Link to="..">Home</Link>
@@ -145,7 +143,7 @@ const NextWorkout = ({ nextWorkout }) => {
 
 const App = () => {
   return (
-    <Placeholder delayMs={patience} fallback={<Spinner size="100" />}>
+    <Suspense maxDuration={patience} fallback={<Spinner size="100" />}>
       <ManageScroll />
       <Router style={{ padding: 20 }}>
         <Home path="/" />
@@ -153,7 +151,7 @@ const App = () => {
         <Workout path="workouts/:workoutId" />
         <Competitions path="competitions" />
       </Router>
-    </Placeholder>
+    </Suspense>
   );
 };
 

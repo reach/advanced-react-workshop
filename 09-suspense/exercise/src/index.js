@@ -1,10 +1,6 @@
-import React, { Placeholder } from "react";
+import React from "react";
 import "./lib/index.css";
+import { createRoot } from "react-dom";
 import App from "./App.start";
-import { unstable_createRoot } from "react-dom";
 
-unstable_createRoot(document.getElementById("root")).render(
-  <Placeholder delayMs={1000} fallback={<div>Loading...</div>}>
-    <App />
-  </Placeholder>
-);
+createRoot(document.getElementById("root")).render(<App />);

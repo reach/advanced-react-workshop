@@ -35,9 +35,8 @@ function sleep(ms=1000) {
 
 */
 
-import React from "react";
-import { cache } from "./lib/cache";
-import { createResource } from "simple-cache-provider";
+import React, { Suspense } from "react";
+import { unstable_createResource as createResource } from "react-cache";
 import { Router, Link } from "@reach/router";
 
 let ContactsResource = createResource(async path => {
@@ -47,7 +46,7 @@ let ContactsResource = createResource(async path => {
 });
 
 function Home() {
-  let { contacts } = ContactsResource.read(cache, "/contacts");
+  let { contacts } = ContactsResource.read("/contacts");
   return (
     <div>
       <h1>Contacts</h1>
@@ -95,8 +94,10 @@ function Contact({ id }) {
 }
 
 export default () => (
-  <Router>
-    <Home path="/" />
-    <Contact path=":id" />
-  </Router>
+  <Suspense maxDuration={3000} fallback={<div>Loading...</div>}>
+    <Router>
+      <Home path="/" />
+      <Contact path=":id" />
+    </Router>
+  </Suspense>
 );

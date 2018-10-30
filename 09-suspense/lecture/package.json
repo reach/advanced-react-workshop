@@ -6,10 +6,10 @@
     "@reach/component-component": "^0.1.1",
     "@reach/router": "^1.2.1",
     "glamor": "^2.20.40",
-    "react": "../vendor/react",
-    "react-dom": "../vendor/react-dom",
-    "react-svg-spinner": "^1.0.1",
-    "simple-cache-provider": "../vendor/simple-cache-provider"
+    "react": "16.6",
+    "react-cache": "^2.0.0-alpha.0",
+    "react-dom": "16.6",
+    "react-svg-spinner": "^1.0.1"
   },
   "devDependencies": {
     "react-scripts": "1.0.10"

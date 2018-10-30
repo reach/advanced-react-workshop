@@ -1,6 +1,6 @@
 import { createElement } from "glamor/react"; // eslint-disable-line
 /* @jsx createElement */
-import React, { Placeholder, lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import { Router, Link } from "@reach/router";
 import Component from "@reach/component-component";
 import Spinner from "react-svg-spinner";
@@ -12,7 +12,6 @@ import {
   NextWorkoutResource,
   network
 } from "./lib/utils";
-import { cache } from "./lib/cache";
 
 const Competitions = lazy(() => import("./lib/Competitions"));
 
@@ -85,22 +84,22 @@ const Home = () => (
 );
 
 const Workouts = () => {
-  const workouts = WorkoutsResource.read(cache, 10);
+  const workouts = WorkoutsResource.read(10);
   return (
     <div>
       <Link to="..">Home</Link>
       <h1>Workouts</h1>
       {workouts.map(workout => (
-        <LoadingLink key={workout.id} to={workout.id} css={link}>
+        <Link key={workout.id} to={workout.id} css={link}>
           {workout.name}
-        </LoadingLink>
+        </Link>
       ))}
     </div>
   );
 };
 
 const Exercises = ({ workoutId }) => {
-  const exercises = ExercisesResource.read(cache, workoutId);
+  const exercises = ExercisesResource.read(workoutId);
   return <ul>{exercises.map((exercise, i) => <li key={i}>{exercise}</li>)}</ul>;
 };
 
@@ -108,18 +107,18 @@ class Workout extends React.Component {
   render() {
     const { workoutId } = this.props;
 
-    const workout = WorkoutResource.read(cache, workoutId);
+    const workout = WorkoutResource.read(workoutId);
 
     return (
       <div>
         <Link to="../..">Home</Link> / <Link to="..">Workouts</Link>
         <h1>{workout.name}</h1>
-        <Placeholder delayMs={patience} fallback={<Spinner size="150" />}>
+        <Suspense maxDuration={patience} fallback={<Spinner size="150" />}>
           <Exercises workoutId={workoutId} />
-        </Placeholder>
+        </Suspense>
         {workout.completed && (
-          <Placeholder
-            delayMs={patience}
+          <Suspense
+            maxDuration={patience}
             fallback={
               <h2>
                 Up Next! <Spinner size="0.75em" />
@@ -127,7 +126,7 @@ class Workout extends React.Component {
             }
           >
             <NextWorkout workoutId={workoutId} />
-          </Placeholder>
+          </Suspense>
         )}
       </div>
     );
@@ -135,7 +134,7 @@ class Workout extends React.Component {
 }
 
 const NextWorkout = ({ workoutId }) => {
-  const nextWorkout = NextWorkoutResource.read(cache, workoutId);
+  const nextWorkout = NextWorkoutResource.read(workoutId);
   return (
     <div>
       <h2>
@@ -168,7 +167,7 @@ const Network = () => (
 const App = () => {
   return (
     <React.Fragment>
-      <Placeholder delayMs={patience} fallback={<Spinner size="100" />}>
+      <Suspense maxDuration={patience} fallback={<Spinner size="100" />}>
         <ManageScroll />
         <Router style={{ padding: 20 }}>
           <Home path="/" />
@@ -176,7 +175,7 @@ const App = () => {
           <Workout path="workouts/:workoutId" />
           <Competitions path="competitions" />
         </Router>
-      </Placeholder>
+      </Suspense>
       <Network />
     </React.Fragment>
   );

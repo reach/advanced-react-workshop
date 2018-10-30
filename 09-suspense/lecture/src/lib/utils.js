@@ -1,15 +1,7 @@
-import { createResource } from "simple-cache-provider";
+import { unstable_createResource as createResource } from "react-cache";
 ////////////////////////////////////////////////////////////
 
-let qnetworks = [
-  "fast",
-  "slow",
-  "slow",
-  "fast",
-  "slow",
-  "fast",
-  "nextIsSlow"
-];
+let qnetworks = ["fast", "slow", "slow", "fast", "slow", "fast", "nextIsSlow"];
 let search = window.location.search.substr(1);
 
 let network = qnetworks[search] || "fast";
@@ -18,8 +10,7 @@ export { network };
 
 ////////////////////////////////////////////////////////////
 
-const sleep = (ms = 1000) =>
-  new Promise(res => setTimeout(res, ms));
+const sleep = (ms = 1000) => new Promise(res => setTimeout(res, ms));
 
 let token = null;
 
@@ -80,12 +71,7 @@ const fakeExercises = {
     "jab punch sprawl",
     "burpees"
   ],
-  lower: [
-    "lunges",
-    "jump squats",
-    "side-kicks",
-    "hip raises"
-  ],
+  lower: ["lunges", "jump squats", "side-kicks", "hip raises"],
   core: ["crunches"],
   "upper-body": ["curls"]
 };
@@ -102,40 +88,34 @@ const fakeNextWorkouts = {
 // fetchers
 export const fetchWorkouts = () =>
   new Promise(async res => {
-    console.logTakeoff("readWorkouts");
+    logTakeoff("readWorkouts");
     await sleep(1000);
-    console.logLanding("readWorkouts");
+    logLanding("readWorkouts");
     res(fakeWorkouts);
   });
 
 export const fetchWorkout = id =>
   new Promise(async res => {
-    console.logTakeoff(`fetchWorkout ${id}`);
+    logTakeoff(`fetchWorkout ${id}`);
     await sleep(1000);
-    console.logLanding(`fetchWorkout ${id}`);
+    logLanding(`fetchWorkout ${id}`);
     res(fakeWorkouts.find(w => w.id === id));
   });
 
 export const fetchExercises = id =>
   new Promise(async res => {
-    console.logTakeoff(`fetchExercises ${id}`);
+    logTakeoff(`fetchExercises ${id}`);
     await sleep(2000);
-    console.logLanding(`fetchExercises ${id}`);
-    console.log("-------");
-    console.log(fakeExercises[id]);
+    logLanding(`fetchExercises ${id}`);
     res(fakeExercises[id]);
   });
 
 export const fetchNextWorkout = id =>
   new Promise(async res => {
-    console.logTakeoff(`fetchNext ${id}`);
+    logTakeoff(`fetchNext ${id}`);
     await sleep(3000);
-    console.logLanding(`fetchNext ${id}`);
-    res(
-      fakeWorkouts.find(
-        workout => workout.id === fakeNextWorkouts[id]
-      )
-    );
+    logLanding(`fetchNext ${id}`);
+    res(fakeWorkouts.find(workout => workout.id === fakeNextWorkouts[id]));
   });
 
 ////////////////////////////////////////////////////////////
@@ -143,9 +123,9 @@ export const fetchNextWorkout = id =>
 export const WorkoutsResource = createResource(
   () =>
     new Promise(async res => {
-      console.logTakeoff("readWorkouts");
+      logTakeoff("readWorkouts");
       await sleep(networks[network].workouts);
-      console.logLanding("readWorkouts");
+      logLanding("readWorkouts");
       res(fakeWorkouts);
     })
 );
@@ -153,9 +133,9 @@ export const WorkoutsResource = createResource(
 export const WorkoutResource = createResource(
   id =>
     new Promise(async res => {
-      console.logTakeoff(`readWorkout ${id}`);
+      logTakeoff(`readWorkout ${id}`);
       await sleep(networks[network].workout);
-      console.logLanding(`readWorkout ${id}`);
+      logLanding(`readWorkout ${id}`);
       res(fakeWorkouts.find(w => w.id === id));
     })
 );
@@ -163,9 +143,9 @@ export const WorkoutResource = createResource(
 export const ExercisesResource = createResource(
   id =>
     new Promise(async res => {
-      console.logTakeoff(`readExercises ${id}`);
+      logTakeoff(`readExercises ${id}`);
       await sleep(networks[network].exercises);
-      console.logLanding(`readExercises ${id}`);
+      logLanding(`readExercises ${id}`);
       res(fakeExercises[id]);
     })
 );
@@ -173,25 +153,17 @@ export const ExercisesResource = createResource(
 export const NextWorkoutResource = createResource(
   id =>
     new Promise(async res => {
-      console.logTakeoff(`readRelated ${id}`);
+      logTakeoff(`readRelated ${id}`);
       await sleep(networks[network].next);
-      console.logLanding(`readRelated ${id}`);
-      res(
-        fakeWorkouts.find(
-          workout =>
-            workout.id === fakeNextWorkouts[id]
-        )
-      );
+      logLanding(`readRelated ${id}`);
+      res(fakeWorkouts.find(workout => workout.id === fakeNextWorkouts[id]));
     })
 );
 
 ////////////////////////////////////////////////////////
 // Contacts
 const API = `https://contacts.now.sh`;
-const fetchContacts = async (
-  url,
-  opts = { headers: {} }
-) => {
+const fetchContacts = async (url, opts = { headers: {} }) => {
   return fetch(`${API}${url}`, {
     ...opts,
     headers: { authorization: token, ...opts.headers }
@@ -204,9 +176,7 @@ const fetchContacts = async (
   });
 };
 
-export const readContacts = createResource(() =>
-  fetchContacts("/contacts")
-);
+export const readContacts = createResource(() => fetchContacts("/contacts"));
 
 export const readContact = createResource(id =>
   fetchContacts(`/contacts/${id}`)
@@ -223,16 +193,10 @@ export const createContact = contact =>
 
 ////////////////////////////////////////////////////////
 // logging stuff
-console.logTakeoff = str => {
-  console.log(
-    `%c🛫 ${str}`,
-    "font-size: 20px; color: hsl(10, 50%, 50%)"
-  );
+let logTakeoff = str => {
+  console.log(`%c🛫 ${str}`, "font-size: 20px; color: hsl(10, 50%, 50%)");
 };
 
-console.logLanding = str => {
-  console.log(
-    `%c🛬 ${str}`,
-    "font-size: 20px; color: hsl(170, 50%, 50%)"
-  );
+let logLanding = str => {
+  console.log(`%c🛬 ${str}`, "font-size: 20px; color: hsl(170, 50%, 50%)");
 };

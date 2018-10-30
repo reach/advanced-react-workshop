@@ -1,6 +1,5 @@
-import React, { Placeholder } from "react";
-import { cache } from "./lib/cache";
-import { createResource } from "simple-cache-provider";
+import React, { Suspense } from "react";
+import { unstable_createResource as createResource } from "react-cache";
 import { Router, Link } from "@reach/router";
 
 let ContactsResource = createResource(async path => {
@@ -23,11 +22,11 @@ let ImageResource = createResource(src => {
 
 function Img({ src, ...props }) {
   // eslint-disable-next-line jsx-a11y/alt-text
-  return <img src={ImageResource.read(cache, src)} {...props} />;
+  return <img src={ImageResource.read(src)} {...props} />;
 }
 
 function Home() {
-  let { contacts } = ContactsResource.read(cache, "/contacts");
+  let { contacts } = ContactsResource.read("/contacts");
   return (
     <div>
       <h1>Contacts</h1>
@@ -45,20 +44,20 @@ function Home() {
 }
 
 function Contact({ id }) {
-  let { contact } = ContactsResource.read(cache, `/contacts/${id}`);
+  let { contact } = ContactsResource.read(`/contacts/${id}`);
   return (
     <div>
       <h1>
         {contact.first} {contact.last}
       </h1>
       <p>
-        <Placeholder delayMs={250} fallback={<span>Loading...</span>}>
+        <Suspense maxDuration={1000} fallback={<span>Loading...</span>}>
           <Img
             alt={`${contact.first} smiling, maybe`}
             height="250"
             src={contact.avatar}
           />
-        </Placeholder>
+        </Suspense>
       </p>
       <p>
         <Link to="/">Home</Link>
@@ -68,8 +67,10 @@ function Contact({ id }) {
 }
 
 export default () => (
-  <Router>
-    <Home path="/" />
-    <Contact path=":id" />
-  </Router>
+  <Suspense maxDuration={3000} fallback={<div>Loading...</div>}>
+    <Router>
+      <Home path="/" />
+      <Contact path=":id" />
+    </Router>
+  </Suspense>
 );
