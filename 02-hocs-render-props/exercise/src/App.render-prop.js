@@ -1,7 +1,6 @@
 import React from "react";
 import createMediaListener from "./lib/createMediaListener";
 import { Galaxy, Trees, Earth } from "./lib/screens";
-import { CSSTransition } from "react-transition-group";
 
 class Media extends React.Component {
   media = createMediaListener(this.props.queries);
@@ -17,8 +16,12 @@ class Media extends React.Component {
   componentDidUpdate(prevProps) {
     if (this.props.queries !== prevProps.queries) {
       this.media.dispose();
-      this.media = createMediaListener(this.props.queries);
-      this.media.listen(media => this.setState({ media }));
+      this.media = createMediaListener(
+        this.props.queries
+      );
+      this.media.listen(media =>
+        this.setState({ media })
+      );
     }
   }
 
@@ -43,7 +46,7 @@ class App extends React.Component {
     return (
       <Media queries={this.state.queries}>
         {media => (
-          <CSSTransition classNames="fade" timeout={300}>
+          <div>
             {media.big ? (
               <Galaxy key="galaxy" />
             ) : media.tiny ? (
@@ -51,7 +54,7 @@ class App extends React.Component {
             ) : (
               <Earth key="earth" />
             )}
-          </CSSTransition>
+          </div>
         )}
       </Media>
     );
