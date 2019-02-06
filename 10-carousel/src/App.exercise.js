@@ -1,6 +1,19 @@
 // You'll find the documentation to be helpful for this exercise:
 // https://reactjs.org/docs/hooks-reference.html
 //
+// 1. Make the icons in the bottom left change the slide to the
+//    index corresponding to the icon's index.
+//    - You'll need `useState` to manage the `currentIndex` state
+//
+// 2. Make the next/previous buttons move through the slides.
+//    - You'll want to cycle the index back to 0 after you've hit
+//      the last slide, you can do it like this:
+//
+//      ```
+//      let nextIndex = (currentIndex + 1) % slides.length
+//      let prevIndex = (currentIndex - 1 + slides.length) % slides.length
+//      ```
+//
 // 3. Make the play/pause button work by cycling through the slides automatically
 //    - You'll need to manage some new `isPlaying` state
 //    - You'll want to use `setTimeout` inside of a `useEffect` and update the
@@ -39,10 +52,20 @@
 //        not when play, next, or previous are clicked, so you'll need some
 //        more state to know when you're managing focus and when you're not.
 //
-import React, { useState, useReducer, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useReducer,
+  useEffect,
+  useRef
+} from "react";
 import Alert from "@reach/alert";
 import VisuallyHidden from "@reach/visually-hidden";
-import { FaPlay, FaPause, FaForward, FaBackward } from "react-icons/fa";
+import {
+  FaPlay,
+  FaPause,
+  FaForward,
+  FaBackward
+} from "react-icons/fa";
 
 import slides from "./whatevs/slides";
 import useProgress from "./useProgress";
@@ -57,7 +80,14 @@ function Slides(props) {
   return <ul {...props} />;
 }
 
-function Slide({ isCurrent, takeFocus, image, id, title, children }) {
+function Slide({
+  isCurrent,
+  takeFocus,
+  image,
+  id,
+  title,
+  children
+}) {
   return (
     <li
       aria-hidden={!isCurrent}
@@ -107,7 +137,9 @@ function ProgressBar({ animate, time }) {
 }
 
 function SpacerGif({ width }) {
-  return <div style={{ display: "inline-block", width }} />;
+  return (
+    <div style={{ display: "inline-block", width }} />
+  );
 }
 
 function App() {
