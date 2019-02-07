@@ -43,7 +43,7 @@ Other notes about the `<audio/>` tag:
 Good luck!
 */
 
-import React from "react";
+import React, { useRef, useState, useContext } from "react";
 import podcast from "./lib/podcast.mp4";
 import mario from "./lib/mariobros.mp3";
 import FaPause from "react-icons/lib/fa/pause";
@@ -51,117 +51,103 @@ import FaPlay from "react-icons/lib/fa/play";
 import FaRepeat from "react-icons/lib/fa/repeat";
 import FaRotateLeft from "react-icons/lib/fa/rotate-left";
 
-class AudioPlayer extends React.Component {
-  render() {
-    return (
-      <div className="audio-player">
-        <audio
-          src={this.props.source}
-          onTimeUpdate={null}
-          onLoadedData={null}
-          onEnded={null}
-          ref={n => (this.audio = n)}
-        />
-        {this.props.children}
-      </div>
-    );
-  }
+function AudioPlayer({ source, children }) {
+  const audioRef = useRef(null);
+
+  return (
+    <div className="audio-player">
+      <audio
+        src={source}
+        onTimeUpdate={null}
+        onLoadedData={null}
+        onEnded={null}
+        ref={audioRef}
+      />
+      {children}
+    </div>
+  );
 }
 
-class Play extends React.Component {
-  render() {
-    return (
-      <button
-        className="icon-button"
-        onClick={null}
-        disabled={null}
-        title="play"
-      >
-        <FaPlay />
-      </button>
-    );
-  }
+function Play() {
+  return (
+    <button className="icon-button" onClick={null} disabled={null} title="play">
+      <FaPlay />
+    </button>
+  );
 }
 
-class Pause extends React.Component {
-  render() {
-    return (
-      <button
-        className="icon-button"
-        onClick={null}
-        disabled={null}
-        title="pause"
-      >
-        <FaPause />
-      </button>
-    );
-  }
+function Pause() {
+  return (
+    <button
+      className="icon-button"
+      onClick={null}
+      disabled={null}
+      title="pause"
+    >
+      <FaPause />
+    </button>
+  );
 }
 
-class PlayPause extends React.Component {
-  render() {
-    return null;
-  }
+function PlayPause() {
+  return null;
 }
 
-class JumpForward extends React.Component {
-  render() {
-    return (
-      <button
-        className="icon-button"
-        onClick={null}
-        disabled={null}
-        title="Forward 10 Seconds"
-      >
-        <FaRepeat />
-      </button>
-    );
-  }
+function JumpForward() {
+  return (
+    <button
+      className="icon-button"
+      onClick={null}
+      disabled={null}
+      title="Forward 10 Seconds"
+    >
+      <FaRepeat />
+    </button>
+  );
 }
 
-class JumpBack extends React.Component {
-  render() {
-    return (
-      <button
-        className="icon-button"
-        onClick={null}
-        disabled={null}
-        title="Back 10 Seconds"
-      >
-        <FaRotateLeft />
-      </button>
-    );
-  }
+function JumpBack() {
+  return (
+    <button
+      className="icon-button"
+      onClick={null}
+      disabled={null}
+      title="Back 10 Seconds"
+    >
+      <FaRotateLeft />
+    </button>
+  );
 }
 
-class Progress extends React.Component {
-  render() {
-    return (
-      <div className="progress" onClick={null}>
-        <div
-          className="progress-bar"
-          style={{
-            width: "23%"
-          }}
-        />
-      </div>
-    );
-  }
+function Progress() {
+  return (
+    <div className="progress" onClick={null}>
+      <div
+        className="progress-bar"
+        style={{
+          width: "23%"
+        }}
+      />
+    </div>
+  );
 }
 
-let Exercise = () => (
-  <div className="exercise">
-    <AudioPlayer source={mario}>
-      <Play /> <Pause /> <span className="player-text">Mario Bros. Remix</span>
-      <Progress />
-    </AudioPlayer>
+function App() {
+  return (
+    <div className="exercise">
+      <AudioPlayer source={mario}>
+        <Play /> <Pause />{" "}
+        <span className="player-text">Mario Bros. Remix</span>
+        <Progress />
+      </AudioPlayer>
 
-    <AudioPlayer source={podcast}>
-      <PlayPause /> <JumpBack /> <JumpForward />{" "}
-      <span className="player-text">Workshop.me Podcast Episode 02</span>
-      <Progress />
-    </AudioPlayer>
-  </div>
-);
+      <AudioPlayer source={podcast}>
+        <PlayPause /> <JumpBack /> <JumpForward />{" "}
+        <span className="player-text">Workshop.me Podcast Episode 02</span>
+        <Progress />
+      </AudioPlayer>
+    </div>
+  );
+}
 
-export default Exercise;
+export default App;

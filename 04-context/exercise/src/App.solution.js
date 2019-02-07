@@ -15,15 +15,15 @@ instance, you can access it as `this.audio` in `AudioPlayer`
 
 ```js
 // play/pause
-audio.play()
-audio.pause()
+audioRef.current.play()
+audioRef.current.pause()
 
 // change the current time
-audio.currentTime = audio.currentTime + 10
-audio.currentTime = audio.currentTime - 30
+audioRef.current.currentTime = audio.currentTime + 10
+audioRef.current.currentTime = audio.currentTime - 30
 
 // know the duration
-audio.duration
+audioRef.current.duration
 
 // values to calculate relative mouse click position
 // on the progress bar
@@ -43,7 +43,7 @@ Other notes about the `<audio/>` tag:
 Good luck!
 */
 
-import React from "react";
+import React, { useState, useMemo, useRef, useContext } from "react";
 import podcast from "./lib/podcast.mp4";
 import mario from "./lib/mariobros.mp3";
 import FaPause from "react-icons/lib/fa/pause";
@@ -51,193 +51,163 @@ import FaPlay from "react-icons/lib/fa/play";
 import FaRepeat from "react-icons/lib/fa/repeat";
 import FaRotateLeft from "react-icons/lib/fa/rotate-left";
 
-let AudioContext = React.createContext();
+const AudioContext = React.createContext();
 
-class AudioPlayer extends React.Component {
-  state = {
-    isPlaying: false,
-    duration: null,
-    currentTime: 0,
-    loaded: false,
-    play: () => {
-      this.audio.play();
-      this.setState({ isPlaying: true });
-    },
-    pause: () => {
-      this.audio.pause();
-      this.setState({ isPlaying: false });
-    },
-    setTime: time => {
-      this.audio.currentTime = time;
-    },
-    jump: by => {
-      this.audio.currentTime = this.audio.currentTime + by;
-    }
-  };
+function AudioPlayer({ source, children }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [duration, setDuration] = useState(false);
+  const [currentTime, setCurrentTime] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const audioRef = useRef(null);
 
-  render() {
-    return (
-      <AudioContext.Provider value={this.state}>
-        <div className="audio-player">
-          <audio
-            src={this.props.source}
-            onTimeUpdate={() => {
-              this.setState({
-                currentTime: this.audio.currentTime,
-                duration: this.audio.duration
-              });
-            }}
-            onLoadedData={() => {
-              this.setState({
-                duration: this.audio.duration,
-                loaded: true
-              });
-            }}
-            onEnded={() => {
-              this.setState({
-                isPlaying: false
-              });
-            }}
-            ref={n => (this.audio = n)}
-          />
-          {this.props.children}
-        </div>
-      </AudioContext.Provider>
-    );
-  }
+  const context = useMemo(() => {
+    return {
+      isPlaying,
+      duration,
+      currentTime,
+      loaded,
+      play: () => {
+        audioRef.current.play();
+        setIsPlaying(true);
+      },
+      pause: () => {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      },
+      setTime: time => {
+        audioRef.current.currentTime = time;
+      },
+      jump: by => {
+        audioRef.current.currentTime = audioRef.current.currentTime + by;
+      }
+    };
+  }, [isPlaying, duration, currentTime, loaded]);
+
+  return (
+    <AudioContext.Provider value={context}>
+      <div className="audio-player">
+        <audio
+          src={source}
+          onTimeUpdate={() => {
+            setCurrentTime(audioRef.current.currentTime);
+            setDuration(audioRef.current.duration);
+          }}
+          onLoadedData={() => {
+            setDuration(audioRef.current.duration);
+            setLoaded(true);
+          }}
+          onEnded={() => {
+            setIsPlaying(false);
+          }}
+          ref={audioRef}
+        />
+        {children}
+      </div>
+    </AudioContext.Provider>
+  );
 }
 
-class Play extends React.Component {
-  render() {
-    return (
-      <AudioContext.Consumer>
-        {context => (
-          <button
-            className="icon-button"
-            onClick={context.play}
-            disabled={context.isPlaying}
-            title="play"
-          >
-            <FaPlay />
-          </button>
-        )}
-      </AudioContext.Consumer>
-    );
-  }
+function Play() {
+  const context = useContext(AudioContext);
+  return (
+    <button
+      className="icon-button"
+      onClick={context.play}
+      disabled={context.isPlaying}
+      title="play"
+    >
+      <FaPlay />
+    </button>
+  );
 }
 
-class Pause extends React.Component {
-  render() {
-    return (
-      <AudioContext.Consumer>
-        {context => (
-          <button
-            className="icon-button"
-            onClick={context.pause}
-            disabled={!context.isPlaying}
-            title="pause"
-          >
-            <FaPause />
-          </button>
-        )}
-      </AudioContext.Consumer>
-    );
-  }
+function Pause() {
+  const context = useContext(AudioContext);
+  return (
+    <button
+      className="icon-button"
+      onClick={context.pause}
+      disabled={!context.isPlaying}
+      title="pause"
+    >
+      <FaPause />
+    </button>
+  );
 }
 
-class PlayPause extends React.Component {
-  render() {
-    return (
-      <AudioContext.Consumer>
-        {context => (context.isPlaying ? <Pause /> : <Play />)}
-      </AudioContext.Consumer>
-    );
-  }
+function PlayPause() {
+  const context = useContext(AudioContext);
+  return context.isPlaying ? <Pause /> : <Play />;
 }
 
-class JumpForward extends React.Component {
-  render() {
-    return (
-      <AudioContext.Consumer>
-        {context => (
-          <button
-            className="icon-button"
-            onClick={() => context.jump(10)}
-            disabled={null}
-            title="Forward 10 Seconds"
-          >
-            <FaRepeat />
-          </button>
-        )}
-      </AudioContext.Consumer>
-    );
-  }
+function JumpForward() {
+  const context = useContext(AudioContext);
+  return (
+    <button
+      className="icon-button"
+      onClick={() => context.jump(10)}
+      disabled={null}
+      title="Forward 10 Seconds"
+    >
+      <FaRepeat />
+    </button>
+  );
 }
 
-class JumpBack extends React.Component {
-  render() {
-    return (
-      <AudioContext.Consumer>
-        {context => (
-          <button
-            className="icon-button"
-            onClick={() => context.jump(-10)}
-            disabled={null}
-            title="Back 10 Seconds"
-          >
-            <FaRotateLeft />
-          </button>
-        )}
-      </AudioContext.Consumer>
-    );
-  }
+function JumpBack() {
+  const context = useContext(AudioContext);
+  return (
+    <button
+      className="icon-button"
+      onClick={() => context.jump(-10)}
+      disabled={null}
+      title="Back 10 Seconds"
+    >
+      <FaRotateLeft />
+    </button>
+  );
 }
 
-class Progress extends React.Component {
-  render() {
-    return (
-      <AudioContext.Consumer>
-        {context => {
-          let { loaded, duration, currentTime, setTime } = context;
+function Progress() {
+  let ref = useRef(null);
+  let { loaded, duration, currentTime, setTime } = useContext(AudioContext);
 
-          return (
-            <div
-              className="progress"
-              ref={n => (this.node = n)}
-              onClick={event => {
-                let rect = this.node.getBoundingClientRect();
-                let clientLeft = event.clientX;
-                let relativeLeft = clientLeft - rect.left;
-                setTime(relativeLeft / rect.width * duration);
-              }}
-            >
-              <div
-                className="progress-bar"
-                style={{
-                  width: loaded ? `${currentTime / duration * 100}%` : "0%"
-                }}
-              />
-            </div>
-          );
+  return (
+    <div
+      className="progress"
+      ref={ref}
+      onClick={event => {
+        let rect = ref.current.getBoundingClientRect();
+        let clientLeft = event.clientX;
+        let relativeLeft = clientLeft - rect.left;
+        setTime((relativeLeft / rect.width) * duration);
+      }}
+    >
+      <div
+        className="progress-bar"
+        style={{
+          width: loaded ? `${(currentTime / duration) * 100}%` : "0%"
         }}
-      </AudioContext.Consumer>
-    );
-  }
+      />
+    </div>
+  );
 }
 
-let Exercise = () => (
-  <div className="exercise">
-    <AudioPlayer source={mario}>
-      <PlayPause /> <span className="player-text">Mario Bros. Remix</span>
-      <Progress />
-    </AudioPlayer>
+function App() {
+  return (
+    <div className="exercise">
+      <AudioPlayer source={mario}>
+        <PlayPause /> <span className="player-text">Mario Bros. Remix</span>
+        <Progress />
+      </AudioPlayer>
 
-    <AudioPlayer source={podcast}>
-      <PlayPause /> <JumpBack /> <JumpForward />{" "}
-      <span className="player-text">Workshop.me Podcast Episode 02</span>
-      <Progress />
-    </AudioPlayer>
-  </div>
-);
+      <AudioPlayer source={podcast}>
+        <PlayPause /> <JumpBack /> <JumpForward />{" "}
+        <span className="player-text">Workshop.me Podcast Episode 02</span>
+        <Progress />
+      </AudioPlayer>
+    </div>
+  );
+}
 
-export default Exercise;
+export default App;
