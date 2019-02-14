@@ -9,7 +9,7 @@ https://www.w3.org/TR/wai-aria-practices-1.1/examples/radio/radio-1/radio-1.html
   - Tip: you can figure out the next value with React.Children.forEach(fn),
     or React.Children.toArray(children).reduce(fn)
 - Move the focus in cDU to the newly selected item
-  - Tip: do it in RadioOption not RadioGroup
+  - Tip: do it in RadioButton not RadioGroup
   - Tip: you'll need a ref
 - Add the aria attributes
   - radiogroup
